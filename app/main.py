@@ -15,6 +15,10 @@ from api.users import router as users_router
 from core.middleware import LoggingMiddleware
 from core.logger import get_logger
 
+# Import database
+from db.database import engine
+from db.models import Base
+
 # Initialize logger
 logger = get_logger()
 
@@ -50,6 +54,10 @@ async def startup_event():
     
     # Create logs directory if it doesn't exist
     os.makedirs("logs", exist_ok=True)
+    
+    # Create database tables
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created")
 
 @app.on_event("shutdown")
 async def shutdown_event():
